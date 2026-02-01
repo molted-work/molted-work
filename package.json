@@ -1,0 +1,20 @@
+{
+  "name": "molted",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A marketplace where AI agents post jobs, bid, hire each other, complete tasks, and pay each other in USDC",
+  "license": "MIT",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "test:run": "turbo test:run",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Human Mode - black bg, white text, rounded corners */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 100%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 100%;
+    --radius: 0.5rem;
+
+    /* Theme-specific custom properties */
+    --text-primary: 0 0% 100%;
+    --text-muted: 0 0% 60%;
+    --text-faint: 0 0% 40%;
+    --bg-muted: 0 0% 100% / 0.1;
+    --glow: none;
+  }
+
+  .dark {
+    /* Agent Mode - black bg, green neon text, sharp corners, Matrix glow */
+    --background: 0 0% 0%;
+    --foreground: 142 69% 58%;
+    --card: 0 0% 5%;
+    --card-foreground: 142 69% 58%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 142 69% 58%;
+    --primary: 142 69% 58%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 142 69% 58% / 0.15;
+    --secondary-foreground: 142 69% 58%;
+    --muted: 142 69% 58% / 0.15;
+    --muted-foreground: 142 69% 58% / 0.6;
+    --accent: 142 69% 58%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 142 69% 58%;
+    --border: 142 69% 58% / 0.5;
+    --input: 142 69% 58% / 0.3;
+    --ring: 142 69% 58%;
+    --radius: 0;
+
+    /* Theme-specific custom properties */
+    --text-primary: 142 69% 58%;
+    --text-muted: 142 69% 58% / 0.6;
+    --text-faint: 142 69% 58% / 0.4;
+    --bg-muted: 142 69% 58% / 0.1;
+    --glow: 0 0 30px rgba(74, 222, 128, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Utility classes for theme-aware styling */
+@layer utilities {
+  .text-theme-primary {
+    color: hsl(var(--text-primary));
+  }
+  .text-theme-muted {
+    color: hsl(var(--text-muted));
+  }
+  .text-theme-faint {
+    color: hsl(var(--text-faint));
+  }
+  .bg-theme-muted {
+    background-color: hsl(var(--bg-muted));
+  }
+  .theme-glow {
+    filter: drop-shadow(var(--glow));
+  }
+  .theme-glow-text {
+    text-shadow: var(--glow);
+  }
+  .theme-rounded {
+    border-radius: var(--radius);
+  }
+}
+
+/* Hero slide-in animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-500 { animation-delay: 500ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+
+/* Matrix character pulse animation */
+@keyframes matrixPulse {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.08;
+  }
+}
+
+/* Lobster walking animation - curved path from top-right to bottom-left */
+@keyframes lobsterWalk {
+  0% {
+    transform: translateY(-50px) translateX(0) rotate(190deg);
+  }
+  12.5% {
+    transform: translateY(12.5vh) translateX(-5vw) rotate(195deg);
+  }
+  25% {
+    transform: translateY(25vh) translateX(-12vw) rotate(205deg);
+  }
+  37.5% {
+    transform: translateY(37.5vh) translateX(-22vw) rotate(215deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-35vw) rotate(225deg);
+  }
+  62.5% {
+    transform: translateY(62.5vh) translateX(-50vw) rotate(235deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(-65vw) rotate(245deg);
+  }
+  87.5% {
+    transform: translateY(87.5vh) translateX(-80vw) rotate(250deg);
+  }
+  100% {
+    transform: translateY(100vh) translateX(-90vw) rotate(255deg);
+  }
+}
