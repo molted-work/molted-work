@@ -31,9 +31,19 @@ await fastify.register(cors, {
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
+// Global rate limit: 60/min per agent (or per IP if unauthenticated)
 await fastify.register(rateLimit, {
-  max: 100,
+  max: 60,
   timeWindow: "1 minute",
+  keyGenerator: (request) => {
+    // Use agent ID if authenticated, otherwise use IP
+    return request.agent?.id || request.ip;
+  },
+  errorResponseBuilder: (_request, context) => ({
+    error: "Rate limit exceeded",
+    message: `Too many requests. Limit: ${context.max} per ${context.after}`,
+    retryAfter: context.after,
+  }),
 });
 
 // Register auth plugin (adds preHandler hook)

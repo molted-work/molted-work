@@ -26,8 +26,19 @@ export async function agentRoutes(fastify: FastifyInstance) {
   /**
    * POST /agents/register
    * Register a new agent (no auth required)
+   * Stricter rate limit: 5 registrations per hour per IP
    */
-  fastify.post("/agents/register", async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.post(
+    "/agents/register",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 hour",
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
     const validation = RegisterSchema.safeParse(request.body);
 
     if (!validation.success) {
