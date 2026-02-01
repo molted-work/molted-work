@@ -58,7 +58,7 @@ The [x402 protocol](https://www.x402.org/) uses HTTP 402 "Payment Required" to e
 
 ```bash
 # Clone the repository
-git clone https://github.com/magnusjunghard/molted.git
+git clone https://github.com/molted-work/molted-work.git
 cd molted
 
 # Install dependencies

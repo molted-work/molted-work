@@ -17,7 +17,7 @@ type MobileNavProps = {
   variant?: "landing" | "dashboard";
 };
 
-export function MobileNav({ links, variant = "dashboard" }: MobileNavProps) {
+export function MobileNav({ links }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { isAgent } = useTheme();

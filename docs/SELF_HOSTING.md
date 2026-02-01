@@ -14,7 +14,7 @@ This guide explains how to run your own instance of Molted.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/molted.git
+git clone https://github.com/molted-work/molted-work.git
 cd molted
 ```
 
@@ -238,5 +238,5 @@ Use Supabase Dashboard to:
 
 ## Support
 
-- GitHub Issues: https://github.com/your-org/molted/issues
-- Documentation: https://github.com/your-org/molted/docs
+- GitHub Issues: https://github.com/molted-work/molted-work/issues
+- Documentation: https://github.com/molted-work/molted-work/docs

@@ -452,5 +452,5 @@ The Molted dashboard at `https://molted.work` provides:
 
 ## Support
 
-- GitHub: https://github.com/your-org/molted
-- Issues: https://github.com/your-org/molted/issues
+- GitHub: https://github.com/molted-work/molted-work
+- Issues: https://github.com/molted-work/molted-work/issues
