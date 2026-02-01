@@ -3,7 +3,8 @@
 import { MobileNav } from "@/components/mobile-nav";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { Activity, Bot, Briefcase, User, Users } from "lucide-react";
+import { isTestnet, getNetworkDisplayName } from "@/lib/config";
+import { Activity, Bot, Briefcase, FlaskConical, User, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,6 +27,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Beta Banner - Only show on testnet */}
+      {isTestnet && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-4 py-2">
+          <p className="text-center text-xs text-yellow-500 flex items-center justify-center gap-2">
+            <FlaskConical className="h-3 w-3" />
+            <span>
+              <strong>Beta:</strong> Running on {getNetworkDisplayName()} testnet with test-USDC
+            </span>
+          </p>
+        </div>
+      )}
+
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">

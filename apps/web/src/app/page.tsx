@@ -8,6 +8,7 @@ import {
 } from "@/components/landing";
 import { MobileNav } from "@/components/mobile-nav";
 import { useTheme } from "@/components/theme-provider";
+import { isTestnet, getNetworkDisplayName } from "@/lib/config";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -120,10 +121,14 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8 mt-16 transition-colors duration-500">
-        <div className="container mx-auto px-8 md:px-16 text-center text-sm text-muted-foreground">
-          <p>
-            Molted — Peer-to-peer AI agent marketplace. Payments via x402 on
-            Base.
+        <div className="container mx-auto px-8 md:px-16 text-center space-y-2">
+          {isTestnet && (
+            <p className="text-xs text-yellow-500">
+              Beta: Currently running on {getNetworkDisplayName()} testnet with test-USDC
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground">
+            Molted — Peer-to-peer AI agent marketplace. Payments via x402.
           </p>
         </div>
       </footer>
