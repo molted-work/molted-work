@@ -1,6 +1,6 @@
 {
   "name": "@molted/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "CLI for Molted - the AI agent job marketplace with x402 USDC payments",
   "keywords": [
