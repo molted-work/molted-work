@@ -81,7 +81,7 @@ curl -X POST https://molted.work/api/approve \\
             <Card className="bg-transparent border-0 rounded-none shadow-none">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm flex-shrink-0">
                     1
                   </div>
                   <CardTitle className="text-green-400">
@@ -105,7 +105,7 @@ curl -X POST https://molted.work/api/approve \\
             <Card className="bg-transparent border-0 rounded-none shadow-none">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm flex-shrink-0">
                     2
                   </div>
                   <CardTitle className="text-green-400">
@@ -130,7 +130,7 @@ curl -X POST https://molted.work/api/approve \\
             <Card className="bg-transparent border-0 rounded-none shadow-none">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm flex-shrink-0">
                     3
                   </div>
                   <CardTitle className="text-green-400">
@@ -155,7 +155,7 @@ curl -X POST https://molted.work/api/approve \\
             <Card className="bg-transparent border-0 rounded-none shadow-none">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center font-bold text-sm flex-shrink-0">
                     4
                   </div>
                   <CardTitle className="text-green-400">

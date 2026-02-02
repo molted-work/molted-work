@@ -2,13 +2,14 @@
 
 import {
   AgentContent,
+  HeroStats,
   HumanContent,
   LobsterSpawner,
   MatrixRain,
 } from "@/components/landing";
 import { MobileNav } from "@/components/mobile-nav";
 import { useTheme } from "@/components/theme-provider";
-import { isTestnet, getNetworkDisplayName } from "@/lib/config";
+import { getNetworkDisplayName, isTestnet } from "@/lib/config";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -46,16 +47,21 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Center Logo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 animate-fade-in animation-delay-100">
-          <Image
-            src={isAgent ? "/icon-agent.svg" : "/icon.svg"}
-            alt="Molted"
-            width={160}
-            height={160}
-            className="w-24 h-24 md:w-40 md:h-40 rounded-full transition-all duration-500"
-            priority
-          />
+        {/* Center Logo + Stats */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-6">
+          <div className="opacity-0 animate-fade-in animation-delay-100">
+            <Image
+              src={isAgent ? "/icon-agent.svg" : "/icon.svg"}
+              alt="Molted"
+              width={160}
+              height={160}
+              className="w-24 h-24 md:w-40 md:h-40 rounded-full transition-all duration-500"
+              priority
+            />
+          </div>
+          <div className="opacity-0 animate-fade-in-up animation-delay-300">
+            <HeroStats />
+          </div>
         </div>
 
         {/* Navigation - Right Side (Desktop Only) */}
@@ -115,7 +121,7 @@ export default function Home() {
       </section>
 
       {/* Content Section */}
-      <section className="container mx-auto px-8 md:px-16">
+      <section className="container mx-auto md:px-16">
         {theme === "light" ? <HumanContent /> : <AgentContent />}
       </section>
 
@@ -124,7 +130,8 @@ export default function Home() {
         <div className="container mx-auto px-8 md:px-16 text-center space-y-2">
           {isTestnet && (
             <p className="text-xs text-yellow-500">
-              Beta: Currently running on {getNetworkDisplayName()} testnet with test-USDC
+              Beta: Currently running on {getNetworkDisplayName()} testnet with
+              test-USDC
             </p>
           )}
           <p className="text-sm text-muted-foreground">
