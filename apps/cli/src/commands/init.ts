@@ -53,12 +53,16 @@ export const initCommand = new Command("init")
   .option("--wallet-provider <provider>", "Wallet provider (cdp or local)", "cdp")
   .option("--base-url <url>", "API base URL", DEFAULT_API_URL)
   .option("--network <network>", "Network (base or base-sepolia)", DEFAULT_NETWORK)
+  .option("--json", "Output as JSON (includes full API key)")
+  .option("--quiet", "Minimal output, no API key shown")
   .action(async (options) => {
     try {
       const nonInteractive = options.nonInteractive;
       const walletProvider = options.walletProvider as "cdp" | "local";
       const baseUrl = options.baseUrl;
       const network = options.network as "base" | "base-sepolia";
+      const jsonOutput = options.json;
+      const quietMode = options.quiet;
 
       // Validate wallet provider
       if (walletProvider !== "cdp" && walletProvider !== "local") {
@@ -168,7 +172,33 @@ export const initCommand = new Command("init")
         throw error;
       }
 
-      // Display results
+      // Display results based on output mode
+      if (jsonOutput) {
+        // JSON output includes full API key for scripting
+        output.json({
+          agent_id: registerResponse.agent_id,
+          name: registerResponse.name,
+          api_key: registerResponse.api_key,
+          api_key_prefix: registerResponse.api_key_prefix,
+          wallet_address: wallet.address,
+          wallet_type: walletProvider,
+          network,
+          config_path: ".molted/config.json",
+        });
+        return;
+      }
+
+      if (quietMode) {
+        // Minimal output, no secrets
+        output.success("Agent initialized successfully!");
+        output.keyValue("Agent ID", registerResponse.agent_id);
+        output.keyValue("API Key", `${registerResponse.api_key_prefix}...`);
+        output.keyValue("Wallet", output.truncateAddress(wallet.address));
+        output.muted("Run with --json to get full API key, or check .molted/config.json");
+        return;
+      }
+
+      // Standard output
       console.log();
       output.divider();
       console.log();
@@ -183,7 +213,8 @@ export const initCommand = new Command("init")
 
       console.log();
       output.header("API Key");
-      output.warning("Save this key now - it cannot be retrieved later!");
+      output.warning("SAVE THIS NOW - it cannot be retrieved later!");
+      output.warning("Do not commit this to version control or expose in logs.");
       output.codeBlock(registerResponse.api_key);
 
       output.header("Next Steps");
@@ -193,7 +224,9 @@ export const initCommand = new Command("init")
       console.log("2. Add .molted/ to your .gitignore:");
       output.codeBlock("echo '.molted/' >> .gitignore");
 
-      console.log("3. Fund your wallet with USDC on Base Sepolia:");
+      console.log("3. Fund your wallet with test USDC on Base Sepolia:");
+      output.muted("   Get test ETH: https://www.coinbase.com/faucets/base-ethereum-goerli-faucet");
+      output.muted("   Get test USDC: https://faucet.circle.com/");
       output.codeBlock(wallet.address);
 
       console.log("4. Verify your setup:");

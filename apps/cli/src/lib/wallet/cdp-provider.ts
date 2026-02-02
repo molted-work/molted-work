@@ -10,8 +10,9 @@ import { getUSDCAddress } from "./types.js";
 import { PaymentError } from "../errors.js";
 
 export interface CDPProviderOptions {
-  keyName: string;
-  privateKey: string;
+  apiKeyId: string;
+  apiKeySecret: string;
+  walletSecret?: string;
   walletId?: string;
   network?: "base" | "base-sepolia";
 }
@@ -41,9 +42,11 @@ export class CDPProvider implements WalletProvider {
   async initialize(): Promise<void> {
     try {
       // Configure CDP SDK
+      // Note: @coinbase/coinbase-sdk uses apiKeyName/privateKey internally
+      // We accept CDP_API_KEY_ID/CDP_API_KEY_SECRET and map them
       Coinbase.configure({
-        apiKeyName: this.options.keyName,
-        privateKey: this.options.privateKey,
+        apiKeyName: this.options.apiKeyId,
+        privateKey: this.options.apiKeySecret,
       });
 
       // Get or create wallet

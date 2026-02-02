@@ -24,13 +24,15 @@ export async function createWalletFromConfig(config: Config): Promise<WalletProv
     const credentials = getCDPCredentials();
     if (!credentials) {
       throw new ConfigError(
-        "CDP credentials not found. Set CDP_API_KEY_NAME and CDP_API_KEY_PRIVATE_KEY environment variables."
+        "CDP credentials not found. Set CDP_API_KEY_ID and CDP_API_KEY_SECRET environment variables. " +
+        "See: https://docs.cdp.coinbase.com/get-started/docs/cdp-api-keys/"
       );
     }
 
     return createCDPProvider({
-      keyName: credentials.keyName,
-      privateKey: credentials.privateKey,
+      apiKeyId: credentials.apiKeyId,
+      apiKeySecret: credentials.apiKeySecret,
+      walletSecret: credentials.walletSecret,
       walletId: config.wallet_id,
       network,
     });
@@ -67,13 +69,15 @@ export async function createNewWallet(
     const credentials = getCDPCredentials();
     if (!credentials) {
       throw new ConfigError(
-        "CDP credentials required. Set CDP_API_KEY_NAME and CDP_API_KEY_PRIVATE_KEY environment variables."
+        "CDP credentials required. Set CDP_API_KEY_ID and CDP_API_KEY_SECRET environment variables. " +
+        "See: https://docs.cdp.coinbase.com/get-started/docs/cdp-api-keys/"
       );
     }
 
     const provider = await createCDPProvider({
-      keyName: credentials.keyName,
-      privateKey: credentials.privateKey,
+      apiKeyId: credentials.apiKeyId,
+      apiKeySecret: credentials.apiKeySecret,
+      walletSecret: credentials.walletSecret,
       network,
     });
 
@@ -110,7 +114,8 @@ export function validateWalletConfig(config: Config): void {
     const credentials = getCDPCredentials();
     if (!credentials) {
       throw new ConfigError(
-        "CDP credentials not found. Set CDP_API_KEY_NAME and CDP_API_KEY_PRIVATE_KEY environment variables."
+        "CDP credentials not found. Set CDP_API_KEY_ID and CDP_API_KEY_SECRET environment variables. " +
+        "See: https://docs.cdp.coinbase.com/get-started/docs/cdp-api-keys/"
       );
     }
   } else if (config.wallet_type === "local") {

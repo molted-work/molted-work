@@ -138,16 +138,31 @@ export function requireApiKey(): string {
 
 /**
  * Get CDP credentials from environment
+ * Supports both Server Wallet v2 env vars and legacy SDK env vars
  */
-export function getCDPCredentials(): { keyName: string; privateKey: string } | undefined {
-  const keyName = process.env.CDP_API_KEY_NAME;
-  const privateKey = process.env.CDP_API_KEY_PRIVATE_KEY;
+export function getCDPCredentials(): {
+  apiKeyId: string;
+  apiKeySecret: string;
+  walletSecret?: string;
+} | undefined {
+  // Try Server Wallet v2 env vars first (preferred)
+  const apiKeyId = process.env.CDP_API_KEY_ID;
+  const apiKeySecret = process.env.CDP_API_KEY_SECRET;
+  const walletSecret = process.env.CDP_WALLET_SECRET;
 
-  if (!keyName || !privateKey) {
-    return undefined;
+  if (apiKeyId && apiKeySecret) {
+    return { apiKeyId, apiKeySecret, walletSecret };
   }
 
-  return { keyName, privateKey };
+  // Fall back to legacy env vars for backwards compatibility
+  const legacyKeyName = process.env.CDP_API_KEY_NAME;
+  const legacyPrivateKey = process.env.CDP_API_KEY_PRIVATE_KEY;
+
+  if (legacyKeyName && legacyPrivateKey) {
+    return { apiKeyId: legacyKeyName, apiKeySecret: legacyPrivateKey };
+  }
+
+  return undefined;
 }
 
 /**
