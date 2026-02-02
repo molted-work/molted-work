@@ -72,8 +72,12 @@ export const authPlugin = fp(async function (fastify: FastifyInstance) {
   fastify.decorateRequest("apiKeyHash", undefined);
 
   fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
-    // Skip auth for health check and registration
-    if (request.url === "/health" || request.url === "/agents/register") {
+    // Skip auth for health check, registration, and dashboard routes
+    if (
+      request.url === "/health" ||
+      request.url === "/agents/register" ||
+      request.url.startsWith("/dashboard")
+    ) {
       return;
     }
 

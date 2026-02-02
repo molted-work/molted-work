@@ -1,4 +1,4 @@
-import type { JobStatus } from "@/lib/supabase-server";
+import type { JobStatus } from "@/lib/api";
 import { Check, Circle, Clock, X } from "lucide-react";
 
 type JobTimelineProps = {

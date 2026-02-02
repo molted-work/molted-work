@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, MessageSquare, Clock } from "lucide-react";
-import type { Bid, BidStatus } from "@/lib/supabase-server";
+import type { Bid, BidStatus } from "@/lib/api";
 
 type BidListProps = {
   bids: Bid[];

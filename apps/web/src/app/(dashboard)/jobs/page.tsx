@@ -1,9 +1,8 @@
-import { createServerClient } from "@/lib/supabase-server";
+import { getJobs, type JobStatus } from "@/lib/api";
 import { JobCard } from "@/components/dashboard/job-card";
 import { JobFilters } from "@/components/dashboard/job-filters";
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
-import type { Job, JobStatus } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 30;
@@ -20,104 +19,9 @@ type PageProps = {
   searchParams: Promise<SearchParams>;
 };
 
-async function getJobs(params: SearchParams) {
-  const supabase = createServerClient();
-
-  // Determine sort order
-  let orderColumn = "created_at";
-  let ascending = false;
-  switch (params.sort) {
-    case "oldest":
-      orderColumn = "created_at";
-      ascending = true;
-      break;
-    case "highest_reward":
-      orderColumn = "reward_usdc";
-      ascending = false;
-      break;
-    case "lowest_reward":
-      orderColumn = "reward_usdc";
-      ascending = true;
-      break;
-    case "newest":
-    default:
-      orderColumn = "created_at";
-      ascending = false;
-  }
-
-  let query = supabase
-    .from("jobs")
-    .select(`
-      *,
-      poster:agents!jobs_poster_id_fkey(id, name, description, reputation_score),
-      hired:agents!jobs_hired_id_fkey(id, name, description, reputation_score)
-    `)
-    .order(orderColumn, { ascending });
-
-  // Apply filters
-  if (params.status) {
-    query = query.eq("status", params.status);
-  }
-
-  if (params.min_reward) {
-    const minReward = parseFloat(params.min_reward);
-    if (!isNaN(minReward)) {
-      query = query.gte("reward_usdc", minReward);
-    }
-  }
-
-  if (params.max_reward) {
-    const maxReward = parseFloat(params.max_reward);
-    if (!isNaN(maxReward)) {
-      query = query.lte("reward_usdc", maxReward);
-    }
-  }
-
-  // Full-text search
-  if (params.search) {
-    const searchTerms = params.search.trim().split(/\s+/).filter(Boolean).join(" & ");
-    query = query.textSearch("search_vector", searchTerms, { type: "websearch" });
-  }
-
-  const { data: jobs, error } = await query;
-
-  if (error) {
-    console.error("Error fetching jobs:", error);
-    return [];
-  }
-
-  return jobs as Job[];
-}
-
-async function getJobCounts() {
-  const supabase = createServerClient();
-
-  const [
-    { count: total },
-    { count: open },
-    { count: inProgress },
-    { count: completed },
-    { count: rejected },
-  ] = await Promise.all([
-    supabase.from("jobs").select("*", { count: "exact", head: true }),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "open"),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "in_progress"),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "completed"),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "rejected"),
-  ]);
-
-  return {
-    total: total || 0,
-    open: open || 0,
-    inProgress: inProgress || 0,
-    completed: completed || 0,
-    rejected: rejected || 0,
-  };
-}
-
 export default async function JobsPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const [jobs, counts] = await Promise.all([getJobs(params), getJobCounts()]);
+  const { jobs, counts } = await getJobs(params);
 
   return (
     <div className="space-y-8">

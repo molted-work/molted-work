@@ -1,50 +1,9 @@
-import { createServerClient } from "@/lib/supabase-server";
+import { getAgents, getAgentStats } from "@/lib/api";
 import { AgentCard } from "@/components/dashboard/agent-card";
 import { Badge } from "@/components/ui/badge";
-import type { Agent } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 30;
-
-async function getAgents() {
-  const supabase = createServerClient();
-
-  const { data: agents, error } = await supabase
-    .from("agents")
-    .select("*")
-    .order("reputation_score", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching agents:", error);
-    return [];
-  }
-
-  return agents as Agent[];
-}
-
-async function getAgentStats() {
-  const supabase = createServerClient();
-
-  const [
-    { count: total },
-    { count: active },
-    { data: agents },
-  ] = await Promise.all([
-    supabase.from("agents").select("*", { count: "exact", head: true }),
-    supabase.from("agents").select("*", { count: "exact", head: true }).eq("is_active", true),
-    supabase.from("agents").select("balance, total_jobs_completed"),
-  ]);
-
-  const totalBalance = agents?.reduce((sum, a) => sum + (a.balance || 0), 0) || 0;
-  const totalJobsCompleted = agents?.reduce((sum, a) => sum + (a.total_jobs_completed || 0), 0) || 0;
-
-  return {
-    total: total || 0,
-    active: active || 0,
-    totalBalance,
-    totalJobsCompleted,
-  };
-}
 
 export default async function AgentsPage() {
   const [agents, stats] = await Promise.all([getAgents(), getAgentStats()]);

@@ -4,8 +4,7 @@ import { JobHeader } from "@/components/dashboard/job-detail/job-header";
 import { JobTimeline } from "@/components/dashboard/job-detail/job-timeline";
 import { MessageThread } from "@/components/dashboard/job-detail/message-thread";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Bid, Completion, Job, Message } from "@/lib/supabase-server";
-import { createServerClient } from "@/lib/supabase-server";
+import { getJobDetail } from "@/lib/api";
 import { FileText, Package } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -16,106 +15,17 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-async function getJob(id: string) {
-  const supabase = createServerClient();
-
-  const { data: job, error } = await supabase
-    .from("jobs")
-    .select(
-      `
-      *,
-      poster:agents!jobs_poster_id_fkey(id, name, description, wallet_address, reputation_score),
-      hired:agents!jobs_hired_id_fkey(id, name, description, wallet_address, reputation_score)
-    `
-    )
-    .eq("id", id)
-    .single();
-
-  if (error || !job) {
-    return null;
-  }
-
-  return job as Job;
-}
-
-async function getBids(jobId: string) {
-  const supabase = createServerClient();
-
-  const { data: bids, error } = await supabase
-    .from("bids")
-    .select(
-      `
-      *,
-      bidder:agents!bids_bidder_id_fkey(id, name, reputation_score)
-    `
-    )
-    .eq("job_id", jobId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching bids:", error);
-    return [];
-  }
-
-  return bids as Bid[];
-}
-
-async function getCompletion(jobId: string) {
-  const supabase = createServerClient();
-
-  const { data: completion, error } = await supabase
-    .from("completions")
-    .select(
-      `
-      *,
-      agent:agents!completions_agent_id_fkey(id, name)
-    `
-    )
-    .eq("job_id", jobId)
-    .single();
-
-  if (error || !completion) {
-    return null;
-  }
-
-  return completion as Completion;
-}
-
-async function getMessages(jobId: string) {
-  const supabase = createServerClient();
-
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select(
-      `
-      *,
-      sender:agents!messages_sender_id_fkey(id, name)
-    `
-    )
-    .eq("job_id", jobId)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching messages:", error);
-    return [];
-  }
-
-  return messages as Message[];
-}
-
 export default async function JobDetailPage({ params }: PageProps) {
   const { id } = await params;
 
-  const [job, bids, completion, messages] = await Promise.all([
-    getJob(id),
-    getBids(id),
-    getCompletion(id),
-    getMessages(id),
-  ]);
-
-  if (!job) {
+  let data;
+  try {
+    data = await getJobDetail(id);
+  } catch {
     notFound();
   }
+
+  const { job, bids, completion, messages } = data;
 
   return (
     <div className="space-y-8">

@@ -10,7 +10,7 @@ import {
   Briefcase,
   Clock
 } from "lucide-react";
-import type { Transaction, TransactionType, Job, JobStatus } from "@/lib/supabase-server";
+import type { Transaction, TransactionType, Job, JobStatus } from "@/lib/api";
 
 type ActivityItem = {
   id: string;

@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase-server";
+import { getStats } from "@/lib/api";
 import { StatsOverview } from "@/components/dashboard/stats-overview";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
@@ -7,34 +7,6 @@ import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 30;
-
-async function getStats() {
-  const supabase = createServerClient();
-
-  const [
-    { count: totalAgents },
-    { count: totalJobs },
-    { count: openJobs },
-    { count: completedJobs },
-    { data: transactions },
-  ] = await Promise.all([
-    supabase.from("agents").select("*", { count: "exact", head: true }),
-    supabase.from("jobs").select("*", { count: "exact", head: true }),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "open"),
-    supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "completed"),
-    supabase.from("transactions").select("usdc_amount").eq("type", "usdc_payment"),
-  ]);
-
-  const totalUSDCPaid = transactions?.reduce((sum, tx) => sum + (Number(tx.usdc_amount) || 0), 0) || 0;
-
-  return {
-    totalAgents: totalAgents || 0,
-    totalJobs: totalJobs || 0,
-    openJobs: openJobs || 0,
-    completedJobs: completedJobs || 0,
-    totalUSDCPaid,
-  };
-}
 
 export default async function DashboardPage() {
   const stats = await getStats();

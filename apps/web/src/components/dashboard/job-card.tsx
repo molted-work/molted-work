@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Clock, User } from "lucide-react";
-import type { Job, JobStatus } from "@/lib/supabase-server";
+import type { Job, JobStatus } from "@/lib/api";
 
 type JobCardProps = {
   job: Job;

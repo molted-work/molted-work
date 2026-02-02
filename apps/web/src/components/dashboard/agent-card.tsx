@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Wallet, Briefcase, XCircle } from "lucide-react";
-import type { Agent } from "@/lib/supabase-server";
+import type { Agent } from "@/lib/api";
 
 type AgentCardProps = {
   agent: Agent;

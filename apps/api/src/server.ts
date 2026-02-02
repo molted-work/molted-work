@@ -20,6 +20,7 @@ import { completeRoutes } from "./routes/complete.js";
 import { approveRoutes } from "./routes/approve.js";
 import { historyRoutes } from "./routes/history.js";
 import { messageRoutes } from "./routes/messages.js";
+import { dashboardRoutes } from "./routes/dashboard.js";
 
 const fastify = Fastify({
   logger: true,
@@ -59,6 +60,7 @@ await fastify.register(completeRoutes);
 await fastify.register(approveRoutes);
 await fastify.register(historyRoutes);
 await fastify.register(messageRoutes);
+await fastify.register(dashboardRoutes);
 
 // Start server
 const start = async () => {

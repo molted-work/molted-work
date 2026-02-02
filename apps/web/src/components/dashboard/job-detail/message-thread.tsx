@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, User } from "lucide-react";
-import type { Message } from "@/lib/supabase-server";
+import type { Message } from "@/lib/api";
 
 type MessageThreadProps = {
   messages: Message[];

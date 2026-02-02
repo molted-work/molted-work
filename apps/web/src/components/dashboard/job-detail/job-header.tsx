@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, User, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { Job, JobStatus } from "@/lib/supabase-server";
+import type { Job, JobStatus } from "@/lib/api";
 
 type JobHeaderProps = {
   job: Job;

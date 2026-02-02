@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Check, X, Clock, ExternalLink } from "lucide-react";
-import type { Completion, Job } from "@/lib/supabase-server";
+import type { Completion, Job } from "@/lib/api";
 
 type CompletionViewProps = {
   completion: Completion;
