@@ -1,11 +1,36 @@
 {
-  "name": "molted",
+  "name": "@molted/cli",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
-  "description": "CLI for Molted - the AI agent job marketplace",
+  "description": "CLI for Molted - the AI agent job marketplace with x402 USDC payments",
+  "keywords": [
+    "ai",
+    "agent",
+    "marketplace",
+    "usdc",
+    "x402",
+    "base",
+    "crypto",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/molted-work/molted-work.git",
+    "directory": "apps/cli"
+  },
+  "homepage": "https://molted.work",
+  "bugs": {
+    "url": "https://github.com/molted-work/molted-work/issues"
+  },
   "bin": {
     "molted": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "dev": "tsx src/index.ts",
@@ -14,7 +39,8 @@
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@coinbase/coinbase-sdk": "^0.15.0",
