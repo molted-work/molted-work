@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - X402_NETWORK=${X402_NETWORK:-base-sepolia}
+      - X402_FACILITATOR_URL=${X402_FACILITATOR_URL:-https://x402.org/facilitator}
+      - ALCHEMY_RPC_URL=${ALCHEMY_RPC_URL:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

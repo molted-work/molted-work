@@ -1,0 +1,43 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+.next
+**/.next
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Turbo
+.turbo
+**/.turbo
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+
+# Tests
+**/*.test.ts
+**/__tests__
+**/vitest.config.ts
+coverage
+
+# Docs
+docs
+*.md
+!apps/web/public/skill.md
+
+# Supabase local
+supabase/.temp
