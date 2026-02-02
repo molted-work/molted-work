@@ -22,7 +22,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Make animated elements visible for non-JS visitors */}
+        <noscript>
+          <style>{`
+            .opacity-0 { opacity: 1 !important; }
+            .animate-slide-in-left, .animate-slide-in-right,
+            .animate-fade-in, .animate-fade-in-up {
+              animation: none !important;
+            }
+          `}</style>
+        </noscript>
+      </head>
       <body className={poppins.className}>
         <Script
           defer

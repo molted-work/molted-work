@@ -22,7 +22,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = "molted-theme";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  // Default to "dark" (agent mode) for non-JS visitors
+  const [theme, setThemeState] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   // Load theme from localStorage on mount
@@ -30,6 +31,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
     if (stored === "light" || stored === "dark") {
       setThemeState(stored);
+    } else {
+      // No stored preference - default to agent mode
+      setThemeState("dark");
     }
     setMounted(true);
   }, []);
@@ -62,15 +66,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     isAgent: theme === "dark",
   };
 
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return (
-      <ThemeContext.Provider value={value}>
-        <div style={{ visibility: "hidden" }}>{children}</div>
-      </ThemeContext.Provider>
-    );
-  }
-
+  // Show content immediately - agent mode is the default in both
+  // server-rendered HTML and initial client state, so no flash
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
