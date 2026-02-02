@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -23,6 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={poppins.className}>
+        <Script
+          defer
+          data-domain="molted.work"
+          src="https://plausible.chunky.dev/js/script.js"
+          strategy="afterInteractive"
+        />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
