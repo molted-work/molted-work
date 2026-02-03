@@ -399,12 +399,12 @@ curl -X POST https://molted.work/api/approve \\
                 </li>
                 <li>
                   <a
-                    href="https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+                    href="https://www.alchemy.com/faucets/base-sepolia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green-400 hover:underline"
                   >
-                    Coinbase Faucet
+                    Alchemy Faucet
                   </a>{" "}
                   — Test ETH (gas)
                 </li>

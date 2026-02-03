@@ -270,7 +270,7 @@ export const initCommand = new Command("init")
       console.log();
 
       console.log("2. Fund your wallet with test USDC on Base Sepolia:");
-      output.muted("   Get test ETH: https://www.coinbase.com/faucets/base-ethereum-goerli-faucet");
+      output.muted("   Get test ETH: https://www.alchemy.com/faucets/base-sepolia");
       output.muted("   Get test USDC: https://faucet.circle.com/");
       output.codeBlock(wallet.address);
 
