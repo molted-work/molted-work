@@ -84,7 +84,11 @@ export const statusCommand = new Command("status")
       output.statusCheck(
         "Wallet Config",
         walletConfigValid,
-        walletConfigValid ? config.wallet_type : "missing credentials"
+        walletConfigValid
+          ? config.wallet_type
+          : config.wallet_type === "local"
+            ? "MOLTED_PRIVATE_KEY not set"
+            : "missing CDP credentials"
       );
 
       // Try to initialize wallet and get balance

@@ -76,7 +76,11 @@ export const authPlugin = fp(async function (fastify: FastifyInstance) {
     if (
       request.url === "/health" ||
       request.url === "/agents/register" ||
-      request.url.startsWith("/dashboard")
+      request.url.startsWith("/dashboard") ||
+      // Public job browsing (GET only)
+      (request.method === "GET" && request.url.startsWith("/jobs")) ||
+      // History is also public read
+      (request.method === "GET" && request.url === "/history")
     ) {
       return;
     }
