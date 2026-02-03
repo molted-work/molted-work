@@ -2,7 +2,8 @@
  * Configuration file management
  *
  * Config file location: ./.molted/config.json
- * API key stored in MOLTED_API_KEY env var only
+ * Credentials file: ./.molted/credentials.json (chmod 600)
+ * API key can be loaded from MOLTED_API_KEY env var or credentials file
  */
 
 import { promises as fs } from "fs";
@@ -12,6 +13,7 @@ import { ConfigError } from "./errors.js";
 
 const CONFIG_DIR = ".molted";
 const CONFIG_FILE = "config.json";
+const CREDENTIALS_FILE = "credentials.json";
 
 export const ConfigSchema = z.object({
   version: z.literal(1),
@@ -28,6 +30,17 @@ export const ConfigSchema = z.object({
 export type Config = z.infer<typeof ConfigSchema>;
 
 /**
+ * Credentials file schema
+ * Stores API key securely with chmod 600
+ */
+const CredentialsSchema = z.object({
+  version: z.literal(1),
+  api_key: z.string().regex(/^ab_[a-f0-9]{32}$/),
+});
+
+export type Credentials = z.infer<typeof CredentialsSchema>;
+
+/**
  * Get the config directory path
  */
 export function getConfigDir(): string {
@@ -39,6 +52,13 @@ export function getConfigDir(): string {
  */
 export function getConfigPath(): string {
   return path.join(getConfigDir(), CONFIG_FILE);
+}
+
+/**
+ * Get the credentials file path
+ */
+export function getCredentialsPath(): string {
+  return path.join(getConfigDir(), CREDENTIALS_FILE);
 }
 
 /**
@@ -116,6 +136,38 @@ export async function deleteConfig(): Promise<void> {
 }
 
 /**
+ * Load credentials from file
+ */
+export async function loadCredentials(): Promise<Credentials | null> {
+  const credentialsPath = getCredentialsPath();
+  try {
+    const content = await fs.readFile(credentialsPath, "utf-8");
+    return CredentialsSchema.parse(JSON.parse(content));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save credentials to file with chmod 600
+ */
+export async function saveCredentials(apiKey: string): Promise<void> {
+  const configDir = getConfigDir();
+  const credentialsPath = getCredentialsPath();
+
+  try {
+    // Ensure config directory exists
+    await fs.mkdir(configDir, { recursive: true });
+
+    const credentials: Credentials = { version: 1, api_key: apiKey };
+    await fs.writeFile(credentialsPath, JSON.stringify(credentials, null, 2) + "\n");
+    await fs.chmod(credentialsPath, 0o600); // rw------- (owner read/write only)
+  } catch (error) {
+    throw new ConfigError(`Failed to save credentials: ${(error as Error).message}`);
+  }
+}
+
+/**
  * Get API key from environment
  */
 export function getApiKey(): string | undefined {
@@ -131,6 +183,57 @@ export function requireApiKey(): string {
     throw new ConfigError(
       "MOLTED_API_KEY environment variable not set. " +
         "Set it with: export MOLTED_API_KEY=your_api_key"
+    );
+  }
+  return apiKey;
+}
+
+/**
+ * Get API key from environment or credentials file (async)
+ * Environment variable takes precedence over file
+ */
+export async function getApiKeyAsync(): Promise<string | undefined> {
+  // Environment variable takes precedence
+  if (process.env.MOLTED_API_KEY) {
+    return process.env.MOLTED_API_KEY;
+  }
+  // Fall back to credentials file
+  const credentials = await loadCredentials();
+  return credentials?.api_key;
+}
+
+/**
+ * Get API key source (for status display)
+ */
+export function getApiKeySource(): "env" | "file" | null {
+  if (process.env.MOLTED_API_KEY) {
+    return "env";
+  }
+  return null; // Sync function can't check file
+}
+
+/**
+ * Get API key source async (for status display)
+ */
+export async function getApiKeySourceAsync(): Promise<"env" | "file" | null> {
+  if (process.env.MOLTED_API_KEY) {
+    return "env";
+  }
+  const credentials = await loadCredentials();
+  if (credentials?.api_key) {
+    return "file";
+  }
+  return null;
+}
+
+/**
+ * Require API key (async) - checks env and file
+ */
+export async function requireApiKeyAsync(): Promise<string> {
+  const apiKey = await getApiKeyAsync();
+  if (!apiKey) {
+    throw new ConfigError(
+      "API key not found. Set MOLTED_API_KEY environment variable or run 'molted init' to store credentials locally."
     );
   }
   return apiKey;

@@ -6,7 +6,7 @@
 
 import { Command } from "commander";
 import * as fs from "fs/promises";
-import { loadConfig, requireApiKey } from "../lib/config.js";
+import { loadConfig, requireApiKeyAsync } from "../lib/config.js";
 import { createApiClient } from "../lib/api-client.js";
 import { handleError, ValidationError, MoltedError } from "../lib/errors.js";
 import * as output from "../lib/output.js";
@@ -35,7 +35,7 @@ export const completeCommand = new Command("complete")
   .action(async (options) => {
     try {
       const config = await loadConfig();
-      const apiKey = requireApiKey();
+      const apiKey = await requireApiKeyAsync();
       const client = createApiClient(config, apiKey);
 
       const jobId = options.job;

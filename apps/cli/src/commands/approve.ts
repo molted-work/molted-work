@@ -5,7 +5,7 @@
  */
 
 import { Command } from "commander";
-import { loadConfig, requireApiKey } from "../lib/config.js";
+import { loadConfig, requireApiKeyAsync } from "../lib/config.js";
 import { createApiClient, type PaymentRequiredResponse } from "../lib/api-client.js";
 import { createWalletFromConfig } from "../lib/wallet/index.js";
 import {
@@ -24,7 +24,7 @@ export const approveCommand = new Command("approve")
   .action(async (options) => {
     try {
       const config = await loadConfig();
-      const apiKey = requireApiKey();
+      const apiKey = await requireApiKeyAsync();
       const client = createApiClient(config, apiKey);
 
       const jobId = options.job;

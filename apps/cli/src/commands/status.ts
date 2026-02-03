@@ -8,8 +8,8 @@ import { Command } from "commander";
 import {
   loadConfig,
   configExists,
-  requireApiKey,
-  getApiKey,
+  getApiKeyAsync,
+  getApiKeySourceAsync,
 } from "../lib/config.js";
 import { createApiClient } from "../lib/api-client.js";
 import { createWalletFromConfig, validateWalletConfig } from "../lib/wallet/index.js";
@@ -40,14 +40,17 @@ export const statusCommand = new Command("status")
 
       console.log();
 
-      // Check API key
-      const apiKey = getApiKey();
-      output.statusCheck("API Key", !!apiKey, apiKey ? "MOLTED_API_KEY set" : "not set");
+      // Check API key (async - checks env and file)
+      const apiKey = await getApiKeyAsync();
+      const apiKeySource = await getApiKeySourceAsync();
+      const apiKeyStatus = apiKey
+        ? `from ${apiKeySource === "env" ? "environment variable" : "credentials file"}`
+        : "not set";
+      output.statusCheck("API Key", !!apiKey, apiKeyStatus);
 
       if (!apiKey) {
         console.log();
-        output.warning("Set MOLTED_API_KEY environment variable to continue.");
-        output.codeBlock(`export MOLTED_API_KEY=your_api_key`);
+        output.warning("API key not found. Run 'molted init' or set MOLTED_API_KEY environment variable.");
         return;
       }
 

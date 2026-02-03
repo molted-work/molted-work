@@ -6,9 +6,12 @@
 
 import { Command } from "commander";
 import * as readline from "readline";
+import { promises as fs } from "fs";
+import path from "path";
 import {
   configExists,
   saveConfig,
+  saveCredentials,
   createConfig,
   deleteConfig,
 } from "../lib/config.js";
@@ -43,6 +46,31 @@ function prompt(question: string): Promise<string> {
 async function confirm(question: string): Promise<boolean> {
   const answer = await prompt(`${question} (y/N) `);
   return answer.toLowerCase() === "y" || answer.toLowerCase() === "yes";
+}
+
+/**
+ * Add .molted/ to .gitignore if not present
+ * Returns true if added, false if already present or error
+ */
+async function ensureGitignore(): Promise<boolean> {
+  const gitignorePath = path.join(process.cwd(), ".gitignore");
+  try {
+    let content = "";
+    try {
+      content = await fs.readFile(gitignorePath, "utf-8");
+    } catch {
+      // File doesn't exist, will create
+    }
+
+    if (!content.includes(".molted/")) {
+      const newContent = content + (content.endsWith("\n") || content === "" ? "" : "\n") + ".molted/\n";
+      await fs.writeFile(gitignorePath, newContent);
+      return true; // Added
+    }
+    return false; // Already present
+  } catch {
+    return false;
+  }
 }
 
 export const initCommand = new Command("init")
@@ -172,6 +200,24 @@ export const initCommand = new Command("init")
         throw error;
       }
 
+      // Save credentials
+      const credentialsSpinner = output.spinner("Saving credentials...");
+      credentialsSpinner.start();
+
+      try {
+        await saveCredentials(registerResponse.api_key);
+        credentialsSpinner.succeed("Credentials saved to .molted/credentials.json (chmod 600)");
+      } catch (error) {
+        credentialsSpinner.fail("Failed to save credentials");
+        throw error;
+      }
+
+      // Update gitignore
+      const gitignoreAdded = await ensureGitignore();
+      if (gitignoreAdded) {
+        output.success("Added .molted/ to .gitignore");
+      }
+
       // Display results based on output mode
       if (jsonOutput) {
         // JSON output includes full API key for scripting
@@ -184,6 +230,7 @@ export const initCommand = new Command("init")
           wallet_type: walletProvider,
           network,
           config_path: ".molted/config.json",
+          credentials_path: ".molted/credentials.json",
         });
         return;
       }
@@ -218,18 +265,16 @@ export const initCommand = new Command("init")
       output.codeBlock(registerResponse.api_key);
 
       output.header("Next Steps");
-      console.log("1. Set your API key as an environment variable:");
-      output.codeBlock(`export MOLTED_API_KEY=${registerResponse.api_key}`);
+      console.log("1. Your credentials are saved locally and will be loaded automatically.");
+      output.muted("   To override, set MOLTED_API_KEY environment variable.");
+      console.log();
 
-      console.log("2. Add .molted/ to your .gitignore:");
-      output.codeBlock("echo '.molted/' >> .gitignore");
-
-      console.log("3. Fund your wallet with test USDC on Base Sepolia:");
+      console.log("2. Fund your wallet with test USDC on Base Sepolia:");
       output.muted("   Get test ETH: https://www.coinbase.com/faucets/base-ethereum-goerli-faucet");
       output.muted("   Get test USDC: https://faucet.circle.com/");
       output.codeBlock(wallet.address);
 
-      console.log("4. Verify your setup:");
+      console.log("3. Verify your setup:");
       output.codeBlock("molted status");
     } catch (error) {
       handleError(error);

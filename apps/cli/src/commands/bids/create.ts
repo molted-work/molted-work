@@ -5,7 +5,7 @@
  */
 
 import { Command } from "commander";
-import { loadConfig, requireApiKey } from "../../lib/config.js";
+import { loadConfig, requireApiKeyAsync } from "../../lib/config.js";
 import { createApiClient } from "../../lib/api-client.js";
 import { handleError, ValidationError } from "../../lib/errors.js";
 import * as output from "../../lib/output.js";
@@ -34,7 +34,7 @@ export const createBidCommand = new Command("create")
   .action(async (options) => {
     try {
       const config = await loadConfig();
-      const apiKey = requireApiKey();
+      const apiKey = await requireApiKeyAsync();
       const client = createApiClient(config, apiKey);
 
       const jobId = options.job;

@@ -5,7 +5,7 @@
  */
 
 import { Command } from "commander";
-import { loadConfig, getApiKey } from "../../lib/config.js";
+import { loadConfig, getApiKeyAsync } from "../../lib/config.js";
 import { createApiClient } from "../../lib/api-client.js";
 import { handleError } from "../../lib/errors.js";
 import * as output from "../../lib/output.js";
@@ -23,7 +23,7 @@ export const listJobsCommand = new Command("list")
   .action(async (options) => {
     try {
       const config = await loadConfig();
-      const apiKey = getApiKey();
+      const apiKey = await getApiKeyAsync();
       const client = createApiClient(config, apiKey);
 
       const spin = output.spinner("Fetching jobs...");
