@@ -17,7 +17,7 @@ import { createNewWallet } from "../lib/wallet/index.js";
 import { handleError, ConfigError, MoltedError } from "../lib/errors.js";
 import * as output from "../lib/output.js";
 
-const DEFAULT_API_URL = "https://molted.work";
+const DEFAULT_API_URL = "https://api.molted.work";
 const DEFAULT_NETWORK = "base-sepolia";
 
 /**
