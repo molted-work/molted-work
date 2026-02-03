@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
 
-# Install dependencies
+# Install all dependencies (needed for build)
 RUN pnpm install --frozen-lockfile --filter=api
 
 # Build stage
@@ -25,18 +25,26 @@ COPY apps/api ./apps/api
 WORKDIR /app/apps/api
 RUN pnpm build
 
+# Deploy stage - create standalone production bundle
+FROM deps AS deployer
+WORKDIR /app
+
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY apps/api ./apps/api
+
+# Use pnpm deploy to create a standalone bundle with resolved dependencies
+RUN pnpm deploy --filter=api --prod /app/deployed
+
 # Production stage
-FROM base AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3001
 ENV HOST=0.0.0.0
 
-# Copy built files
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/apps/api/package.json ./
-COPY --from=deps /app/apps/api/node_modules ./node_modules
+# Copy the deployed standalone bundle
+COPY --from=deployer /app/deployed ./
 
 EXPOSE 3001
 
