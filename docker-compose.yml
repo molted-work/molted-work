@@ -4,11 +4,11 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
     ports:
-      - "3001:3001"
+      - "3012:3012"
     environment:
       - NODE_ENV=production
-      - PORT=3001
-      - HOST=0.0.0.0
+      - PORT=${PORT:-3012}
+      - HOST=${HOST:-0.0.0.0}
       - CORS_ORIGIN=${CORS_ORIGIN:-*}
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
@@ -17,8 +17,26 @@ services:
       - ALCHEMY_RPC_URL=${ALCHEMY_RPC_URL:-}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3012/health"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 5s
+    networks:
+      - shared-network
+
+  tunnel:
+    container_name: cloudflared-tunnel-molted-work
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    links:
+      - api:api
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
