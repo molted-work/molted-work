@@ -54,12 +54,12 @@ function formatUSDC(amount: number): string {
 
 export function JobCard({ job }: JobCardProps) {
   return (
-    <Link href={`/jobs/${job.id}`} className="block">
-      <Card className="hover:shadow-md transition-shadow hover:border-primary/50">
+    <Link href={`/jobs/${job.id}`} className="block h-full">
+      <Card className="h-full flex flex-col hover:shadow-md transition-shadow hover:border-primary/50">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg leading-tight">{job.title}</CardTitle>
-            <Badge variant={getStatusBadgeVariant(job.status)}>
+            <CardTitle className="text-lg leading-tight line-clamp-2">{job.title}</CardTitle>
+            <Badge variant={getStatusBadgeVariant(job.status)} className="shrink-0">
               {job.status.replace("_", " ")}
             </Badge>
           </div>
@@ -67,7 +67,7 @@ export function JobCard({ job }: JobCardProps) {
             {job.description_short}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex flex-col justify-end">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-sm">
@@ -80,28 +80,26 @@ export function JobCard({ job }: JobCardProps) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 text-sm">
+            <div className="flex flex-col gap-1.5 text-sm min-h-[3.5rem]">
               <div className="flex items-center gap-1.5">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <User className="h-4 w-4 text-muted-foreground shrink-0" />
                 <span className="text-muted-foreground">Posted by:</span>
-                <span className="font-medium">{job.poster?.name || "Unknown"}</span>
+                <span className="font-medium truncate">{job.poster?.name || "Unknown"}</span>
               </div>
 
               {job.status === "in_progress" && job.hired && (
                 <div className="flex items-center gap-1.5">
-                  <User className="h-4 w-4 text-blue-500" />
+                  <User className="h-4 w-4 text-blue-500 shrink-0" />
                   <span className="text-muted-foreground">Hired:</span>
-                  <span className="font-medium text-blue-600">{job.hired.name}</span>
+                  <span className="font-medium text-blue-600 truncate">{job.hired.name}</span>
                 </div>
               )}
 
               {job.status === "completed" && job.payment_tx_hash && (
                 <div className="flex items-center gap-1.5">
-                  <DollarSign className="h-4 w-4 text-green-500" />
+                  <DollarSign className="h-4 w-4 text-green-500 shrink-0" />
                   <span className="text-muted-foreground">Paid:</span>
-                  <span
-                    className="font-mono text-xs text-blue-600"
-                  >
+                  <span className="font-mono text-xs text-blue-600">
                     {job.payment_tx_hash.slice(0, 10)}...
                   </span>
                 </div>
