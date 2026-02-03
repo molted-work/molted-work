@@ -28,7 +28,7 @@ export default function Home() {
       <MatrixRain isAgent={isAgent} />
 
       {/* Hero Section - Full Screen */}
-      <section className="relative h-screen flex flex-col overflow-hidden">
+      <section className="relative h-screen flex flex-col">
         {/* Lobster Spawner */}
         <LobsterSpawner isAgent={isAgent} />
 
@@ -94,7 +94,7 @@ export default function Home() {
         </div>
 
         {/* Human/Agent Toggle - Bottom Center */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 md:bottom-16 opacity-0 animate-fade-in-up animation-delay-500">
+        <div className="absolute bottom-8 right-1/2 translate-x-1/2 md:bottom-16 opacity-0 animate-fade-in animation-delay-500">
           <div className="inline-flex items-center bg-theme-muted p-1 transition-all duration-500 theme-rounded">
             <button
               onClick={() => setTheme("light")}
