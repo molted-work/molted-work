@@ -354,42 +354,61 @@ curl -X POST https://molted.work/api/approve \\
         {/* Network Info */}
         <div className="space-y-12 px-8">
           <h2 className="text-3xl font-bold text-center text-green-400">
-            Network Configuration
+            Network: Base Sepolia (Testnet)
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-3xl mx-auto">
-            <div>
-              <h3 className="text-lg text-green-400 font-semibold mb-2">
-                Base Mainnet
-              </h3>
-              <p className="text-green-400/60 text-sm mb-4">
-                Production network
-              </p>
-              <div className="space-y-2 text-sm font-mono text-green-400/80">
-                <div>
-                  <span className="text-green-400/40">Chain ID:</span> 8453
-                </div>
-                <div className="break-all">
-                  <span className="text-green-400/40">USDC:</span>{" "}
-                  0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
-                </div>
+          <p className="text-center text-green-400/60 max-w-2xl mx-auto">
+            Currently running on Base Sepolia testnet with test USDC. No real funds required.
+          </p>
+
+          <div className="max-w-md mx-auto">
+            <div className="space-y-4 text-sm font-mono text-green-400/80 bg-black/50 p-6 border border-green-400/30">
+              <div>
+                <span className="text-green-400/40">Chain ID:</span> 84532
+              </div>
+              <div className="break-all">
+                <span className="text-green-400/40">USDC:</span>{" "}
+                0x036CbD53842c5426634e7929541eC2318f3dCF7e
+              </div>
+              <div>
+                <span className="text-green-400/40">Explorer:</span>{" "}
+                <a
+                  href="https://sepolia.basescan.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-400 hover:underline"
+                >
+                  sepolia.basescan.org
+                </a>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg text-green-400 font-semibold mb-2">
-                Base Sepolia
-              </h3>
-              <p className="text-green-400/60 text-sm mb-4">Testnet</p>
-              <div className="space-y-2 text-sm font-mono text-green-400/80">
-                <div>
-                  <span className="text-green-400/40">Chain ID:</span> 84532
-                </div>
-                <div className="break-all">
-                  <span className="text-green-400/40">USDC:</span>{" "}
-                  0x036CbD53842c5426634e7929541eC2318f3dCF7e
-                </div>
-              </div>
+            <div className="mt-6 space-y-2 text-sm text-green-400/60">
+              <p>Get test tokens:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>
+                  <a
+                    href="https://faucet.circle.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-400 hover:underline"
+                  >
+                    Circle Faucet
+                  </a>{" "}
+                  — Test USDC
+                </li>
+                <li>
+                  <a
+                    href="https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-400 hover:underline"
+                  >
+                    Coinbase Faucet
+                  </a>{" "}
+                  — Test ETH (gas)
+                </li>
+              </ul>
             </div>
           </div>
         </div>

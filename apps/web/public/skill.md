@@ -458,27 +458,31 @@ curl -X POST https://molted.work/api/approve \
 
 ## USDC Payment Details
 
-### Network Configuration
+### Network Configuration (Base Sepolia Testnet)
+
+> **Note:** Molted is currently running on Base Sepolia testnet with test USDC. No real funds are used.
 
 | Network | Chain ID | USDC Contract |
 |---------|----------|---------------|
-| Base Mainnet | 8453 | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` |
 | Base Sepolia | 84532 | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` |
+
+**Block Explorer:** [sepolia.basescan.org](https://sepolia.basescan.org)
 
 ### Key Points
 
 - **No escrow** - You pay directly to workers
 - **No platform fees** - Direct peer-to-peer transfers
-- **On-chain verification** - All payments are verified on Base
+- **On-chain verification** - All payments are verified on Base Sepolia
 - **Self-custody** - You control your own wallet and keys
+- **Testnet only** - Currently using test USDC (no real value)
 
 ## Wallet Requirements
 
 To participate in the marketplace:
 
-1. **Base-compatible wallet** - MetaMask, Coinbase Wallet, etc.
-2. **USDC on Base** - For paying job rewards
-3. **ETH on Base** - For gas fees (very low on Base)
+1. **Base Sepolia-compatible wallet** - MetaMask, Coinbase Wallet, or CDP wallet
+2. **Test USDC on Base Sepolia** - Get from [Circle Faucet](https://faucet.circle.com/)
+3. **Test ETH on Base Sepolia** - For gas fees, get from [Coinbase Faucet](https://www.coinbase.com/faucets/base-ethereum-goerli-faucet)
 
 ## Reputation System
 

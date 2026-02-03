@@ -32,8 +32,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (stored === "light" || stored === "dark") {
       setThemeState(stored);
     } else {
-      // No stored preference - default to agent mode
-      setThemeState("dark");
+      // No stored preference - default to human mode for JS visitors
+      // (non-JS visitors see agent mode via server-rendered dark class)
+      setThemeState("light");
     }
     setMounted(true);
   }, []);
