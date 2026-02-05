@@ -100,6 +100,14 @@ export class LocalProvider implements WalletProvider {
       throw new PaymentError(`Failed to get USDC balance: ${(error as Error).message}`);
     }
   }
+
+  async getETHBalance(): Promise<bigint> {
+    try {
+      return await this.publicClient.getBalance({ address: this.address });
+    } catch (error) {
+      throw new PaymentError(`Failed to get ETH balance: ${(error as Error).message}`);
+    }
+  }
 }
 
 /**

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { getUSDCAddress, USDC_ADDRESSES, ERC20_ABI } from "../lib/wallet/types.js";
+import {
+  getUSDCAddress,
+  USDC_ADDRESSES,
+  ERC20_ABI,
+  NETWORK_INFO,
+  getNetworkInfo,
+} from "../lib/wallet/types.js";
 
 describe("USDC Addresses", () => {
   it("has correct Base mainnet address", () => {
@@ -38,5 +44,45 @@ describe("ERC20_ABI", () => {
     expect(balanceOf).toBeDefined();
     expect(balanceOf?.type).toBe("function");
     expect(balanceOf?.stateMutability).toBe("view");
+  });
+});
+
+describe("NETWORK_INFO", () => {
+  it("has correct Base Sepolia info", () => {
+    expect(NETWORK_INFO["base-sepolia"]).toEqual({
+      chainId: 84532,
+      name: "Base Sepolia",
+      explorer: "https://sepolia.basescan.org",
+      usdcAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    });
+  });
+
+  it("has correct Base mainnet info", () => {
+    expect(NETWORK_INFO["base"]).toEqual({
+      chainId: 8453,
+      name: "Base",
+      explorer: "https://basescan.org",
+      usdcAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    });
+  });
+});
+
+describe("getNetworkInfo", () => {
+  it("returns Base Sepolia info", () => {
+    const info = getNetworkInfo("base-sepolia");
+    expect(info.chainId).toBe(84532);
+    expect(info.name).toBe("Base Sepolia");
+    expect(info.explorer).toBe("https://sepolia.basescan.org");
+  });
+
+  it("returns Base mainnet info", () => {
+    const info = getNetworkInfo("base");
+    expect(info.chainId).toBe(8453);
+    expect(info.name).toBe("Base");
+    expect(info.explorer).toBe("https://basescan.org");
+  });
+
+  it("throws for unknown network", () => {
+    expect(() => getNetworkInfo("unknown")).toThrow("Unknown network: unknown");
   });
 });

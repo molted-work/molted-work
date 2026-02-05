@@ -13,6 +13,7 @@ import {
 } from "../lib/config.js";
 import { createApiClient } from "../lib/api-client.js";
 import { createWalletFromConfig, validateWalletConfig } from "../lib/wallet/index.js";
+import { getNetworkInfo } from "../lib/wallet/types.js";
 import { handleError, ConfigError } from "../lib/errors.js";
 import * as output from "../lib/output.js";
 import { fromUSDCUnits } from "../lib/x402/client.js";
@@ -94,37 +95,89 @@ export const statusCommand = new Command("status")
             : "missing CDP credentials"
       );
 
-      // Try to initialize wallet and get balance
+      // Try to initialize wallet and get balances
       let walletInitialized = false;
-      let balance: bigint | null = null;
+      let usdcBalance: bigint | null = null;
+      let ethBalance: bigint | null = null;
+      let wallet;
       if (walletConfigValid) {
         try {
-          const wallet = await createWalletFromConfig(config);
+          wallet = await createWalletFromConfig(config);
           walletInitialized = true;
-          balance = await wallet.getUSDCBalance();
+          usdcBalance = await wallet.getUSDCBalance();
+          ethBalance = await wallet.getETHBalance();
         } catch {
           // Wallet init failed
         }
       }
 
+      // Get network info
+      const networkInfo = getNetworkInfo(config.network);
+
       console.log();
       output.divider();
       console.log();
 
-      // Display wallet info
-      output.keyValue("Wallet", output.truncateAddress(config.wallet_address));
-      output.keyValue("Type", config.wallet_type);
-      output.keyValue("Network", config.network);
+      // Display network info
+      output.header("Network");
+      output.keyValue("Chain", `${networkInfo.name} (chainId: ${networkInfo.chainId})`);
+      output.keyValue("USDC Contract", networkInfo.usdcAddress);
+      output.keyValue("Explorer", networkInfo.explorer);
 
-      if (balance !== null) {
-        const balanceFormatted = fromUSDCUnits(balance).toFixed(2);
-        output.keyValue("Balance", `${balanceFormatted} USDC`);
+      console.log();
+
+      // Display wallet info
+      output.header("Wallet");
+      output.keyValue("Address", config.wallet_address);
+      output.keyValue("Type", config.wallet_type);
+      output.muted(`  View: ${networkInfo.explorer}/address/${config.wallet_address}`);
+
+      console.log();
+
+      // Display balances
+      output.header("Balances");
+
+      if (walletInitialized && ethBalance !== null && usdcBalance !== null) {
+        // ETH balance
+        const ethFormatted = (Number(ethBalance) / 1e18).toFixed(6);
+        const ethOk = ethBalance > BigInt(Math.floor(0.001 * 1e18)); // Need some ETH for gas
+        output.statusCheck("ETH (gas)", ethOk, `${ethFormatted} ETH`);
+
+        // USDC balance
+        const usdcFormatted = fromUSDCUnits(usdcBalance).toFixed(2);
+        const usdcOk = usdcBalance > BigInt(0);
+        output.statusCheck("USDC", usdcOk, `${usdcFormatted} USDC`);
+
+        // Show funding guidance if low
+        if (!ethOk || !usdcOk) {
+          console.log();
+          output.warning(`Wallet needs funding to transact on ${networkInfo.name}:`);
+          console.log();
+
+          if (!ethOk) {
+            console.log("  1. Get test ETH (for gas fees):");
+            output.muted("     https://www.alchemy.com/faucets/base-sepolia");
+            console.log();
+          }
+
+          if (!usdcOk) {
+            console.log(`  ${!ethOk ? "2" : "1"}. Get test USDC:`);
+            output.muted("     https://faucet.circle.com/ → Select Base Sepolia");
+            console.log();
+          }
+
+          console.log("  Send funds to:");
+          output.codeBlock(config.wallet_address);
+        }
       } else if (walletConfigValid && !walletInitialized) {
-        output.keyValue("Balance", output.colors.muted("(failed to fetch)"));
+        output.muted("  (failed to fetch balances)");
+      } else {
+        output.muted("  (wallet not configured)");
       }
 
       if (agent) {
         console.log();
+        output.header("Agent Stats");
         output.keyValue("Reputation", `${agent.reputation_score.toFixed(1)}/5.0`);
         output.keyValue("Jobs Completed", String(agent.total_jobs_completed));
         output.keyValue("Jobs Failed", String(agent.total_jobs_failed));
@@ -133,9 +186,14 @@ export const statusCommand = new Command("status")
       console.log();
 
       // Summary
-      const allGood = apiHealthy && authValid && walletConfigValid;
-      if (allGood) {
+      const allGood = apiHealthy && authValid && walletConfigValid && walletInitialized;
+      const hasGoodBalances = ethBalance !== null && usdcBalance !== null &&
+        ethBalance > BigInt(Math.floor(0.001 * 1e18)) && usdcBalance > BigInt(0);
+
+      if (allGood && hasGoodBalances) {
         output.success("All systems operational!");
+      } else if (allGood) {
+        output.warning("Systems ready, but wallet needs funding. See above for instructions.");
       } else {
         output.warning("Some checks failed. Review the status above.");
       }

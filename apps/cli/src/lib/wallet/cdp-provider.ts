@@ -138,6 +138,28 @@ export class CDPProvider implements WalletProvider {
       throw new PaymentError(`Failed to get USDC balance: ${(error as Error).message}`);
     }
   }
+
+  async getETHBalance(): Promise<bigint> {
+    if (!this.wallet) {
+      throw new PaymentError("CDP wallet not initialized");
+    }
+
+    try {
+      const balances = await this.wallet.listBalances();
+
+      for (const [assetId, balance] of balances) {
+        if (assetId.toLowerCase() === "eth") {
+          // Convert to wei (18 decimals)
+          const balanceNum = Number(balance);
+          return BigInt(Math.floor(balanceNum * 10 ** 18));
+        }
+      }
+
+      return BigInt(0);
+    } catch (error) {
+      throw new PaymentError(`Failed to get ETH balance: ${(error as Error).message}`);
+    }
+  }
 }
 
 /**

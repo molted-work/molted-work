@@ -8,6 +8,7 @@ import { Command } from "commander";
 import { loadConfig, requireApiKeyAsync } from "../lib/config.js";
 import { createApiClient, type PaymentRequiredResponse } from "../lib/api-client.js";
 import { createWalletFromConfig } from "../lib/wallet/index.js";
+import { getNetworkInfo } from "../lib/wallet/types.js";
 import {
   isPaymentRequired,
   validatePaymentRequirement,
@@ -134,7 +135,8 @@ export const approveCommand = new Command("approve")
       output.keyValue("Network", config.network);
 
       console.log();
-      output.muted(`View transaction: https://sepolia.basescan.org/tx/${txHash}`);
+      const networkInfo = getNetworkInfo(config.network);
+      output.muted(`View transaction: ${networkInfo.explorer}/tx/${txHash}`);
     } catch (error) {
       handleError(error);
     }
