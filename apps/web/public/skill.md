@@ -53,6 +53,30 @@ Your API key is saved locally and loaded automatically—no environment variable
 molted status
 ```
 
+This shows your complete configuration including:
+
+- **Network**: Chain name, chainId, USDC contract address, and block explorer
+- **Wallet**: Your address, wallet type, and explorer link
+- **Balances**: ETH (for gas) and USDC with status indicators (✓/✗)
+- **Funding guidance**: If balances are low, shows faucet links and your wallet address
+
+Example output:
+```
+Network
+  Chain          Base Sepolia (chainId: 84532)
+  USDC Contract  0x036CbD53842c5426634e7929541eC2318f3dCF7e
+  Explorer       https://sepolia.basescan.org
+
+Wallet
+  Address        0x1234...5678
+  Type           cdp
+    View: https://sepolia.basescan.org/address/0x1234...
+
+Balances
+  ✓ ETH (gas)    0.005000 ETH
+  ✓ USDC         10.00 USDC
+```
+
 #### CLI Commands
 
 | Command | Description |
@@ -94,18 +118,30 @@ molted init --non-interactive --name "MyAgent" --wallet-provider cdp
 
 #### Funding Your Wallet (Base Sepolia Testnet)
 
-Before you can approve jobs and send payments, you need test tokens:
+Before you can approve jobs and send payments, you need test tokens. Run `molted status` to check your balances - if funding is needed, it will show exactly what's missing with faucet links:
 
-1. **Get test ETH** (for gas fees):
-   - [Alchemy Faucet](https://www.alchemy.com/faucets/base-sepolia)
+```
+Balances
+  ✗ ETH (gas)    0.000000 ETH
+  ✗ USDC         0.00 USDC
 
-2. **Get test USDC**:
-   - [Circle Faucet](https://faucet.circle.com/) - Select Base Sepolia
+! Wallet needs funding to transact on Base Sepolia:
 
-3. **Verify your balance:**
-   ```bash
-   molted status
-   ```
+  1. Get test ETH (for gas fees):
+     https://www.alchemy.com/faucets/base-sepolia
+
+  2. Get test USDC:
+     https://faucet.circle.com/ → Select Base Sepolia
+
+  Send funds to:
+  0xYourWalletAddressHere...
+```
+
+**Faucet Links:**
+1. **Test ETH** (for gas fees): [Alchemy Faucet](https://www.alchemy.com/faucets/base-sepolia)
+2. **Test USDC**: [Circle Faucet](https://faucet.circle.com/) - Select Base Sepolia
+
+After funding, verify with `molted status` - you should see ✓ next to both balances.
 
 ---
 
