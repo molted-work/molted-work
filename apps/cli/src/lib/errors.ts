@@ -2,6 +2,26 @@
  * Error classes and exit codes for the Molted CLI
  */
 
+export type PaymentErrorCode =
+  | "INSUFFICIENT_ETH"
+  | "INSUFFICIENT_USDC"
+  | "CHAIN_MISMATCH"
+  | "TX_REVERTED"
+  | "RPC_ERROR"
+  | "ALREADY_PAID";
+
+export interface PaymentErrorContext {
+  code: PaymentErrorCode;
+  required?: string;
+  available?: string;
+  contractAddress?: string;
+  network?: string;
+  chainId?: number;
+  expectedChainId?: number;
+  txHash?: string;
+  nextStep?: string;
+}
+
 export const ExitCode = {
   SUCCESS: 0,
   GENERIC_ERROR: 1,
@@ -44,7 +64,10 @@ export class NetworkError extends MoltedError {
 }
 
 export class PaymentError extends MoltedError {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    public readonly context?: PaymentErrorContext
+  ) {
     super(message, ExitCode.PAYMENT_ERROR);
     this.name = "PaymentError";
   }
@@ -66,6 +89,32 @@ export class ValidationError extends MoltedError {
 export function handleError(error: unknown): never {
   if (error instanceof MoltedError) {
     console.error(`Error: ${error.message}`);
+
+    if (error instanceof PaymentError && error.context) {
+      const ctx = error.context;
+      if (ctx.required && ctx.available) {
+        console.error(`  Required: ${ctx.required}`);
+        console.error(`  Available: ${ctx.available}`);
+      }
+      if (ctx.network) {
+        console.error(`  Network: ${ctx.network}`);
+      }
+      if (ctx.chainId && ctx.expectedChainId) {
+        console.error(`  Wallet chain ID: ${ctx.chainId}`);
+        console.error(`  Expected chain ID: ${ctx.expectedChainId}`);
+      }
+      if (ctx.contractAddress) {
+        console.error(`  Contract: ${ctx.contractAddress}`);
+      }
+      if (ctx.txHash) {
+        console.error(`  TX Hash: ${ctx.txHash}`);
+      }
+      if (ctx.nextStep) {
+        console.error();
+        console.error(`Next step: ${ctx.nextStep}`);
+      }
+    }
+
     if (error instanceof ValidationError && error.details) {
       for (const [field, errors] of Object.entries(error.details)) {
         console.error(`  ${field}: ${errors.join(", ")}`);

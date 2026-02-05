@@ -46,6 +46,10 @@ export class LocalProvider implements WalletProvider {
     });
   }
 
+  getChainId(): number {
+    return this.chain.id;
+  }
+
   async sendUSDC(params: SendUSDCParams): Promise<`0x${string}`> {
     try {
       const usdcAddress = getUSDCAddress(params.chainId);

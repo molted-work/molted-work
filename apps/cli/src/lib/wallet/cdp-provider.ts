@@ -29,6 +29,10 @@ export class CDPProvider implements WalletProvider {
     this.network = options.network || "base-sepolia";
   }
 
+  getChainId(): number {
+    return this.network === "base" ? 8453 : 84532;
+  }
+
   get address(): `0x${string}` {
     if (!this._address) {
       throw new PaymentError("CDP wallet not initialized. Call initialize() first.");

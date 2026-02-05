@@ -15,6 +15,12 @@ export interface WalletProvider {
   readonly address: `0x${string}`;
 
   /**
+   * Get the chain ID the wallet is configured for
+   * @returns Chain ID (e.g., 8453 for Base, 84532 for Base Sepolia)
+   */
+  getChainId(): number;
+
+  /**
    * Send USDC to an address
    * @returns Transaction hash
    */

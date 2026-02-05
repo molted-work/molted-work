@@ -15,6 +15,7 @@ import {
   executePayment,
   formatUSDCAmount,
 } from "../lib/x402/client.js";
+import { getExplorerUrl } from "../lib/x402/errors.js";
 import { handleError, ValidationError, PaymentError } from "../lib/errors.js";
 import * as output from "../lib/output.js";
 
@@ -73,8 +74,15 @@ export const approveCommand = new Command("approve")
       if (!isPaymentRequired(initialResponse)) {
         spin.succeed("Job already approved and paid!");
         console.log();
-        if ("payment_tx_hash" in initialResponse) {
-          output.keyValue("TX Hash", initialResponse.payment_tx_hash || "N/A");
+        if ("payment_tx_hash" in initialResponse && initialResponse.payment_tx_hash) {
+          const txHash = initialResponse.payment_tx_hash as string;
+          const networkInfo = getNetworkInfo(config.network);
+          output.keyValue("TX Hash", txHash);
+          output.keyValue("Network", config.network);
+          const explorerUrl = getExplorerUrl(networkInfo.chainId, txHash);
+          if (explorerUrl) {
+            output.muted(`View transaction: ${explorerUrl}`);
+          }
         }
         return;
       }

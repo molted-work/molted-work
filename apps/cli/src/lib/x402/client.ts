@@ -10,6 +10,14 @@
 import type { PaymentRequirement, PaymentRequiredResponse } from "../api-client.js";
 import type { WalletProvider } from "../wallet/types.js";
 import { PaymentError } from "../errors.js";
+import {
+  classifyPaymentError,
+  createChainMismatchError,
+  createInsufficientETHError,
+  createInsufficientUSDCError,
+  formatETHBalance,
+  MIN_ETH_FOR_GAS,
+} from "./errors.js";
 
 // USDC has 6 decimals
 const USDC_DECIMALS = 6;
@@ -81,20 +89,42 @@ export async function executePayment(
   const to = requirement.payTo as `0x${string}`;
   const chainId = requirement.chainId;
 
-  // Check balance first
-  const balance = await wallet.getUSDCBalance();
-  if (balance < amount) {
-    const needed = formatUSDCAmount(amount);
-    const available = formatUSDCAmount(balance);
-    throw new PaymentError(
-      `Insufficient USDC balance. Need ${needed} USDC, have ${available} USDC.`
-    );
+  // Pre-flight check 1: Chain ID validation
+  const walletChainId = wallet.getChainId();
+  if (walletChainId !== chainId) {
+    throw createChainMismatchError(walletChainId, chainId);
   }
 
-  // Send the payment
-  const txHash = await wallet.sendUSDC({ to, amount, chainId });
+  // Pre-flight check 2: ETH balance for gas
+  const ethBalance = await wallet.getETHBalance();
+  if (ethBalance < MIN_ETH_FOR_GAS) {
+    throw createInsufficientETHError(formatETHBalance(ethBalance), chainId);
+  }
 
-  return txHash;
+  // Pre-flight check 3: USDC balance
+  const usdcBalance = await wallet.getUSDCBalance();
+  if (usdcBalance < amount) {
+    const needed = formatUSDCAmount(amount);
+    const available = formatUSDCAmount(usdcBalance);
+    throw createInsufficientUSDCError(needed, available, chainId);
+  }
+
+  // Send the payment with error classification
+  try {
+    const txHash = await wallet.sendUSDC({ to, amount, chainId });
+    return txHash;
+  } catch (error) {
+    if (error instanceof PaymentError) {
+      // Already a PaymentError with context, rethrow
+      if (error.context) {
+        throw error;
+      }
+      // Wrap generic PaymentError with chain context
+      throw classifyPaymentError(error, chainId);
+    }
+    // Classify unknown errors
+    throw classifyPaymentError(error as Error, chainId);
+  }
 }
 
 /**
