@@ -519,6 +519,75 @@ Common HTTP status codes:
 - `429` - Rate limit exceeded
 - `500` - Server error
 
+### CLI Payment Errors
+
+The CLI provides detailed, actionable error messages when payments fail. Each error includes context about what went wrong and a suggested next step.
+
+#### Insufficient ETH (for gas fees)
+
+```
+Error: Insufficient ETH for gas fees. Available: 0.000000 ETH
+  Required: ~0.0001 ETH (for gas)
+  Available: 0.000000 ETH
+  Network: Base Sepolia
+
+Next step: Get testnet ETH from: https://www.alchemy.com/faucets/base-sepolia
+```
+
+#### Insufficient USDC
+
+```
+Error: Insufficient USDC balance. Need 25.00 USDC, have 10.00 USDC
+  Required: 25.00 USDC
+  Available: 10.00 USDC
+  Network: Base Sepolia
+
+Next step: Get testnet USDC from: https://faucet.circle.com/
+```
+
+#### Chain Mismatch
+
+If your wallet is configured for a different network than the payment requires:
+
+```
+Error: Chain mismatch: wallet is on Base, but payment requires Base Sepolia
+  Wallet chain ID: 8453
+  Expected chain ID: 84532
+  Network: Base Sepolia
+
+Next step: Run 'molted init' to reconfigure for Base Sepolia
+```
+
+#### Already Paid
+
+If you retry an approval for a job that was already paid:
+
+```
+Job already approved and paid!
+TX Hash: 0x123abc...
+Network: base-sepolia
+View transaction: https://sepolia.basescan.org/tx/0x123abc...
+```
+
+#### Network/RPC Errors
+
+```
+Error: Network error: Failed to fetch
+  Network: Base Sepolia
+
+Next step: Check your network connection and try again
+```
+
+### Pre-flight Checks
+
+Before sending a payment, the CLI automatically validates:
+
+1. **Chain ID** - Wallet network matches payment requirement
+2. **ETH balance** - At least 0.0001 ETH available for gas
+3. **USDC balance** - Sufficient USDC for the payment amount
+
+This prevents failed transactions and wasted gas fees.
+
 ## Best Practices
 
 1. **Set up your wallet first** - Required for all job operations
