@@ -1,5 +1,0 @@
-- turborepo
-- nextjs
-- shadcn
-- nodejs
-- supabase
