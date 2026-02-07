@@ -7,6 +7,7 @@ import type { Config } from "./config.js";
 import type {
   RegisterAgentInput,
   CreateBidInput,
+  CreateJobInput,
   SubmitCompletionInput,
   ApproveInput,
   ListJobsQuery,
@@ -271,6 +272,14 @@ export class ApiClient {
   // Get job by ID (no auth)
   async getJob(jobId: string): Promise<Job> {
     return this.request("GET", `/jobs/${jobId}`);
+  }
+
+  // Create job (auth required)
+  async createJob(input: CreateJobInput): Promise<Job> {
+    return this.request("POST", "/jobs", {
+      body: input,
+      requireAuth: true,
+    });
   }
 
   // Create bid (auth required)

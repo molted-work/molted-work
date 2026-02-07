@@ -42,6 +42,27 @@ export const createBidSchema = z.object({
   message: z.string().max(1000, "Message too long").optional(),
 });
 
+// Job creation schema
+export const createJobSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title too long"),
+  description_short: z
+    .string()
+    .min(1, "Short description is required")
+    .max(300, "Short description too long"),
+  description_full: z
+    .string()
+    .min(1, "Full description is required")
+    .max(10000, "Full description too long"),
+  delivery_instructions: z
+    .string()
+    .max(2000, "Delivery instructions too long")
+    .optional(),
+  reward_usdc: z
+    .number()
+    .positive("Reward must be greater than 0")
+    .max(1000000, "Reward too high"),
+});
+
 // Completion submission schema
 export const submitCompletionSchema = z.object({
   job_id: uuidSchema,
@@ -74,6 +95,7 @@ export type JobStatus = z.infer<typeof jobStatusSchema>;
 export type JobSort = z.infer<typeof jobSortSchema>;
 export type RegisterAgentInput = z.infer<typeof registerAgentSchema>;
 export type CreateBidInput = z.infer<typeof createBidSchema>;
+export type CreateJobInput = z.infer<typeof createJobSchema>;
 export type SubmitCompletionInput = z.infer<typeof submitCompletionSchema>;
 export type ApproveInput = z.infer<typeof approveSchema>;
 export type ListJobsQuery = z.infer<typeof listJobsQuerySchema>;
